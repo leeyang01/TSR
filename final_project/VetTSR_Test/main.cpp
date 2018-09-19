@@ -30,17 +30,17 @@ vetwarningsigndetector vw;
 vector<trafficlight> Light_vector;
 vector<warn> Warn_vector;
 vector<RectRegion> sign_rect_region;
-void *function_light(void*args){//信号灯线程，加锁对srcImage全局变量进行修改
+void *function_light(void*args){//信号灯线程
     Light_vector.clear();
     vt.TrafficLight(srcImage,Light_vector);
     pthread_exit(0);
 }
-void *warning(void*args){// 警告标志线程，加锁对srcImage全局变量进行修改
+void *warning(void*args){// 警告标志线程
     Warn_vector.clear();
     vt.WarnSign(srcImage,Warn_vector);
     pthread_exit(0);
 }
-void *sign(void*args){// 禁令标志线程，加锁对srcImage全局变量进行修改
+void *sign(void*args){// 禁令标志线程
     Mat src=srcImage.clone();
     signprepframe = signpreprocessor.getCurrentPreprocessedImage(src);
     sign_rect_region=sd.signDetector(signprepframe,srcImage);
@@ -70,7 +70,6 @@ int main()
     pthread_attr_t attr;
     pthread_attr_init(&attr);
     pthread_attr_setdetachstate( &attr, PTHREAD_CREATE_JOINABLE );
-    pthread_mutex_init(&image_mutex,NULL);// 互斥信号量
     namedWindow("Video");
     VideoCapture cap("/home/lee/桌面/TSR/警告标志/视频/HPIM0016.mov");// 打开视频文件
     if (!cap.isOpened())
